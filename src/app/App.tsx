@@ -6,6 +6,7 @@ import { MandiPricesCard } from './components/mandi-prices-card';
 import { CommunityCard } from './components/community-card';
 import { TransportCard } from './components/transport-card';
 import { MandiPricesPage } from './components/mandi-prices-page';
+import { CommunityPage } from './components/community-page';
 import { Sparkles } from 'lucide-react';
 
 export default function App() {
@@ -75,12 +76,14 @@ export default function App() {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <CommunityCard />
+                <CommunityCard onViewAll={() => setCurrentView('community')} />
                 <TransportCard />
               </div>
             </div>
           ) : currentView === 'mandi' ? (
             <MandiPricesPage />
+          ) : currentView === 'community' ? (
+            <CommunityPage />
           ) : (
             <div className="flex-1 p-8 flex flex-col items-center justify-center text-slate-500">
               <Sparkles className="w-12 h-12 mb-4 opacity-20" />

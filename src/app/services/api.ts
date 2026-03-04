@@ -23,12 +23,23 @@ export interface Crop {
   color: string;
 }
 
+export interface Reply {
+  _id?: string;
+  author: string;
+  body: string;
+  createdAt: string;
+}
+
 export interface Post {
+  _id?: string;
   id?: string;
   title: string;
   body: string;
   author: string;
+  authorId?: string;
+  replies?: Reply[];
   createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface MandiData {
@@ -86,7 +97,7 @@ export const cropsAPI = {
     const params = new URLSearchParams();
     if (filters?.search) params.append('search', filters.search);
     if (filters?.season) params.append('season', filters.season);
-    
+
     const response = await fetch(`${API_BASE_URL}/crops?${params.toString()}`);
     if (!response.ok) throw new Error('Failed to fetch crops');
     return response.json();

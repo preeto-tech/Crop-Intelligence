@@ -10,7 +10,11 @@ interface Post {
   createdAt?: string;
 }
 
-export function CommunityCard() {
+interface CommunityCardProps {
+  onViewAll?: () => void;
+}
+
+export function CommunityCard({ onViewAll }: CommunityCardProps) {
   const [posts, setPosts] = useState<APIPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +58,7 @@ export function CommunityCard() {
     const diff = Date.now() - new Date(date).getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
+
     if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
     if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
     return 'Just now';
@@ -79,7 +83,7 @@ export function CommunityCard() {
     return (
       <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg">
         <p className="text-red-600">{error}</p>
-        <button 
+        <button
           onClick={fetchPosts}
           className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
         >
@@ -96,12 +100,20 @@ export function CommunityCard() {
           <h3 className="text-lg font-semibold text-slate-900">Community Updates</h3>
           <p className="text-sm text-slate-500">Recent discussions</p>
         </div>
-        <button 
-          onClick={() => setShowNewPost(!showNewPost)}
-          className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
-        >
-          {showNewPost ? 'Cancel' : 'New Post →'}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowNewPost(!showNewPost)}
+            className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            {showNewPost ? 'Cancel' : 'New Post'}
+          </button>
+          <button
+            onClick={onViewAll}
+            className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
+          >
+            View All →
+          </button>
+        </div>
       </div>
 
       {showNewPost && (
