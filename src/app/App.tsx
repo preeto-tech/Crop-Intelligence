@@ -7,35 +7,58 @@ import { CommunityCard } from './components/community-card';
 import { TransportCard } from './components/transport-card';
 import { MandiPricesPage } from './components/mandi-prices-page';
 import { CommunityPage } from './components/community-page';
+import { CropLibraryPage } from './components/crop-library-page';
+import { WeatherPage } from './components/weather-page';
+import { TransportPage } from './components/transport-page';
 import { Sparkles } from 'lucide-react';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/30 to-emerald-50/40 flex">
-      <Sidebar activeView={currentView} onViewChange={setCurrentView} />
+      <Sidebar
+        activeView={currentView}
+        onViewChange={(view) => {
+          setCurrentView(view);
+          setIsSidebarOpen(false);
+        }}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar profileImage="https://images.unsplash.com/photo-1595956481935-a9e254951d49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXJtZXIlMjBwcm9maWxlJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzcyNDcwMDUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral" />
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        {/* Mobile Overlay */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        <Navbar
+          profileImage="https://images.unsplash.com/photo-1595956481935-a9e254951d49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXJtZXIlMjBwcm9maWxlJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzcyNDcwMDUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
 
         <main className="flex-1 overflow-y-auto">
           {currentView === 'dashboard' ? (
-            <div className="max-w-7xl mx-auto p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
               {/* Welcome Header */}
-              <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg">
-                <div className="flex items-start justify-between">
+              <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 md:p-8 border border-white/50 shadow-lg">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                    <div className="flex items-center gap-2 mb-1 md:mb-2">
+                      <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                         Welcome back, Rajesh! 👋
                       </h1>
                     </div>
-                    <p className="text-slate-600">
+                    <p className="text-sm md:text-base text-slate-600">
                       Here's what's happening with your farm today
                     </p>
                   </div>
-                  <button className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-green-500/30 transition-all">
+                  <button className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-green-500/30 transition-all">
                     <Sparkles className="w-5 h-5" />
                     Get AI Insights
                   </button>
@@ -64,7 +87,7 @@ export default function App() {
 
               {/* Main Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <WeatherCard />
+                <WeatherCard onViewAll={() => setCurrentView('weather')} />
                 <MandiPricesCard
                   onViewAll={() => setCurrentView('mandi')}
                   images={{
@@ -77,13 +100,19 @@ export default function App() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <CommunityCard onViewAll={() => setCurrentView('community')} />
-                <TransportCard />
+                <TransportCard onViewAll={() => setCurrentView('transport')} />
               </div>
             </div>
           ) : currentView === 'mandi' ? (
             <MandiPricesPage />
           ) : currentView === 'community' ? (
             <CommunityPage />
+          ) : currentView === 'crops' ? (
+            <CropLibraryPage />
+          ) : currentView === 'weather' ? (
+            <WeatherPage />
+          ) : currentView === 'transport' ? (
+            <TransportPage />
           ) : (
             <div className="flex-1 p-8 flex flex-col items-center justify-center text-slate-500">
               <Sparkles className="w-12 h-12 mb-4 opacity-20" />

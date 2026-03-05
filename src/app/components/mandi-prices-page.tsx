@@ -91,28 +91,28 @@ export function MandiPricesPage() {
     };
 
     return (
-        <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto">
+        <div className="flex-1 p-4 md:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-2">
+                    <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-2">
                         Mandi Price Analytics
                     </h2>
-                    <p className="text-slate-600 flex items-center gap-2">
+                    <p className="text-sm md:text-base text-slate-600 flex items-center gap-2">
                         <Calendar className="w-4 h-4" />
-                        Live market rates as of {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        Live rates: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <div className="relative group">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div className="relative group flex-1 sm:flex-none">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-green-600 transition-colors" />
                         <input
                             type="text"
                             placeholder="Search crops..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10 pr-4 py-2 bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 w-64 transition-all"
+                            className="pl-10 pr-4 py-2 bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 w-full sm:w-64 transition-all"
                         />
                     </div>
                     <div className="flex items-center gap-2 bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl px-3 py-2 cursor-pointer hover:bg-white/80 transition-colors">
@@ -133,8 +133,8 @@ export function MandiPricesPage() {
             {/* Market Overview Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Trend Chart */}
-                <div className="lg:col-span-2 bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg">
-                    <div className="flex items-center justify-between mb-6">
+                <div className="lg:col-span-2 bg-white/60 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-white/50 shadow-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                         <h3 className="font-bold text-slate-900">Price Movement Index</h3>
                         <div className="flex items-center gap-4 text-xs">
                             <div className="flex items-center gap-1.5">
@@ -148,7 +148,7 @@ export function MandiPricesPage() {
                         </div>
                     </div>
 
-                    <div className="h-[300px] w-full">
+                    <div className="h-[200px] md:h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={getTrendData('Wheat')}>
                                 <defs>
@@ -280,7 +280,7 @@ export function MandiPricesPage() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                             <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${change > 0 ? 'bg-green-100 text-green-700' :
-                                                    change < 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'
+                                                change < 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'
                                                 }`}>
                                                 {change > 0 ? <TrendingUp className="w-3 h-3" /> :
                                                     change < 0 ? <TrendingDown className="w-3 h-3" /> : <Minus className="w-3 h-3" />}

@@ -2,7 +2,11 @@ import { Truck, MapPin, Clock, Phone, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { transportAPI, TransportRequest } from '../services/api';
 
-export function TransportCard() {
+interface TransportCardProps {
+  onViewAll?: () => void;
+}
+
+export function TransportCard({ onViewAll }: TransportCardProps) {
   const [showBooking, setShowBooking] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -54,7 +58,7 @@ export function TransportCard() {
             <h3 className="text-lg font-semibold text-slate-900">Book Transport</h3>
             <p className="text-sm text-slate-500">Fill in the details</p>
           </div>
-          <button 
+          <button
             onClick={() => setShowBooking(false)}
             className="text-sm font-medium text-slate-600 hover:text-slate-900"
           >
@@ -163,13 +167,21 @@ export function TransportCard() {
           <h3 className="text-lg font-semibold text-slate-900">Transport Booking</h3>
           <p className="text-sm text-slate-500">Book reliable transport</p>
         </div>
-        <button 
-          onClick={() => setShowBooking(true)}
-          className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 flex items-center gap-1"
-        >
-          <Plus className="w-3 h-3" />
-          Book Now
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onViewAll}
+            className="text-xs font-semibold text-green-600 hover:text-green-700 transition-colors"
+          >
+            View History →
+          </button>
+          <button
+            onClick={() => setShowBooking(true)}
+            className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 flex items-center gap-1"
+          >
+            <Plus className="w-3 h-3" />
+            Book Now
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -177,7 +189,7 @@ export function TransportCard() {
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-600 to-green-500 flex items-center justify-center flex-shrink-0">
             <Truck className="w-6 h-6 text-white" />
           </div>
-          
+
           <div className="flex-1">
             <h4 className="font-semibold text-slate-900 mb-1">Sample Transport</h4>
             <p className="text-sm text-slate-600 mb-3">50 quintals to Mumbai Mandi</p>
