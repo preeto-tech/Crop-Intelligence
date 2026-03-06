@@ -15,7 +15,7 @@ import {
     Phone
 } from 'lucide-react';
 
-export function TransportPage() {
+export function TransportPage({ user }: { user?: any }) {
     const [showBookingModal, setShowBookingModal] = useState(false);
 
     const bookings = [

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from './components/sidebar';
 import { Navbar } from './components/navbar';
 import { WeatherCard } from './components/weather-card';
@@ -10,39 +10,85 @@ import { CommunityPage } from './components/community-page';
 import { CropLibraryPage } from './components/crop-library-page';
 import { WeatherPage } from './components/weather-page';
 import { TransportPage } from './components/transport-page';
+import { LoginPage } from './components/login-page';
+import { SignupPage } from './components/signup-page';
+import { ProfilePage } from './components/profile-page';
 import { Sparkles } from 'lucide-react';
 import { AIInsightsModal } from './components/ai-insights-modal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('dashboard');
+  const [currentView, setCurrentView] = useState('login'); // default to login or dashboard
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (token && !user) {
+      // Fetch user profile on mount if token exists
+      fetch('http://localhost:5000/api/auth/profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Not logged in');
+          return res.json();
+        })
+        .then(data => setUser(data))
+        .catch((err) => {
+          console.error('Session expired', err);
+          handleLogout();
+        });
+    }
+  }, [token, user]);
+
+  const handleLoginSuccess = (newToken: string, newUser: any) => {
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
+    setUser(newUser);
+    setCurrentView('dashboard');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+    setCurrentView('login');
+  };
+
+  const isAuthView = currentView === 'login' || currentView === 'signup';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/30 to-emerald-50/40 flex">
-      <Sidebar
-        activeView={currentView}
-        onViewChange={(view) => {
-          setCurrentView(view);
-          setIsSidebarOpen(false);
-        }}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+      {!isAuthView && (
+        <Sidebar
+          activeView={currentView}
+          onViewChange={(view) => {
+            setCurrentView(view);
+            setIsSidebarOpen(false);
+          }}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       <div className="flex-1 flex flex-col overflow-hidden relative">
         {/* Mobile Overlay */}
-        {isSidebarOpen && (
+        {isSidebarOpen && !isAuthView && (
           <div
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
 
-        <Navbar
-          profileImage="https://images.unsplash.com/photo-1595956481935-a9e254951d49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXJtZXIlMjBwcm9maWxlJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzcyNDcwMDUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-          onMenuClick={() => setIsSidebarOpen(true)}
-        />
+        {!isAuthView && (
+          <Navbar
+            profileImage="https://images.unsplash.com/photo-1595956481935-a9e254951d49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXJtZXIlMjBwcm9maWxlJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzcyNDcwMDUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+            onMenuClick={() => setIsSidebarOpen(true)}
+            onProfileClick={() => setCurrentView('profile')}
+            isLoggedIn={!!token}
+            user={user}
+          />
+        )}
 
         <main className="flex-1 overflow-y-auto">
           {currentView === 'dashboard' ? (
@@ -53,7 +99,7 @@ export default function App() {
                   <div>
                     <div className="flex items-center gap-2 mb-1 md:mb-2">
                       <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                        Welcome back, Rajesh! 👋
+                        Welcome back, {user?.name ? user.name.split(' ')[0] : 'Farmer'}! 👋
                       </h1>
                     </div>
                     <p className="text-sm md:text-base text-slate-600">
@@ -104,20 +150,26 @@ export default function App() {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <CommunityCard onViewAll={() => setCurrentView('community')} />
-                <TransportCard onViewAll={() => setCurrentView('transport')} />
+                <CommunityCard onViewAll={() => setCurrentView('community')} user={user} />
+                <TransportCard onViewAll={() => setCurrentView('transport')} user={user} />
               </div>
             </div>
           ) : currentView === 'mandi' ? (
             <MandiPricesPage />
           ) : currentView === 'community' ? (
-            <CommunityPage />
+            <CommunityPage user={user} />
           ) : currentView === 'crops' ? (
             <CropLibraryPage />
           ) : currentView === 'weather' ? (
             <WeatherPage />
           ) : currentView === 'transport' ? (
-            <TransportPage />
+            <TransportPage user={user} />
+          ) : currentView === 'login' ? (
+            <LoginPage onNavigate={setCurrentView} onLoginSuccess={handleLoginSuccess} />
+          ) : currentView === 'signup' ? (
+            <SignupPage onNavigate={setCurrentView} onLoginSuccess={handleLoginSuccess} />
+          ) : currentView === 'profile' ? (
+            <ProfilePage token={token} onLogout={handleLogout} onNavigate={setCurrentView} />
           ) : (
             <div className="flex-1 p-8 flex flex-col items-center justify-center text-slate-500">
               <Sparkles className="w-12 h-12 mb-4 opacity-20" />

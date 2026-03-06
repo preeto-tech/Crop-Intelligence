@@ -1,5 +1,5 @@
 // API Service for Crop Intelligence Platform
-const API_BASE_URL = 'https://cors-anywhere-d4lv.onrender.com/https://asking-saved-dim-trial.trycloudflare.com/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // Types
 export interface User {

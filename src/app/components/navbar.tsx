@@ -4,9 +4,12 @@ import { setTranslationLanguage, getCurrentLanguage, LanguageCode } from '../uti
 interface NavbarProps {
   profileImage: string;
   onMenuClick?: () => void;
+  onProfileClick?: () => void;
+  isLoggedIn?: boolean;
+  user?: any;
 }
 
-export function Navbar({ profileImage, onMenuClick }: NavbarProps) {
+export function Navbar({ profileImage, onMenuClick, onProfileClick, isLoggedIn, user }: NavbarProps) {
   const currentLang = getCurrentLanguage();
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -55,17 +58,29 @@ export function Navbar({ profileImage, onMenuClick }: NavbarProps) {
             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
-          <button className="flex items-center gap-2 md:gap-3 pl-2 pr-2 md:pl-3 md:pr-4 py-2 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 hover:shadow-md transition-all">
-            <img
-              src={profileImage}
-              alt="Profile"
-              className="w-8 h-8 md:w-9 md:h-9 rounded-lg object-cover"
-            />
-            <div className="text-left hidden md:block">
-              <p className="text-sm font-semibold text-slate-900">Rajesh Kumar</p>
-              <p className="text-xs text-slate-500">Farmer</p>
-            </div>
-          </button>
+          {isLoggedIn ? (
+            <button
+              onClick={onProfileClick}
+              className="flex items-center gap-2 md:gap-3 pl-2 pr-2 md:pl-3 md:pr-4 py-2 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 hover:shadow-md transition-all"
+            >
+              <img
+                src={user?.avatar || profileImage}
+                alt="Profile"
+                className="w-8 h-8 md:w-9 md:h-9 rounded-lg object-cover"
+              />
+              <div className="text-left hidden md:block">
+                <p className="text-sm font-semibold text-slate-900">{user?.name || 'Rajesh Kumar'}</p>
+                <p className="text-xs text-slate-500 capitalize">{user?.role || 'Farmer'}</p>
+              </div>
+            </button>
+          ) : (
+            <button
+              onClick={onProfileClick} // Will pass it 'profile' which will redirect to login if not authenticated or we can handle differently. Wait, if not logged in, it shouldn't show profile.
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl hover:shadow-lg transition-all text-sm font-medium"
+            >
+              Sign In
+            </button>
+          )}
         </div>
       </div>
     </header>

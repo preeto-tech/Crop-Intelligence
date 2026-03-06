@@ -12,14 +12,15 @@ interface Post {
 
 interface CommunityCardProps {
   onViewAll?: () => void;
+  user?: any;
 }
 
-export function CommunityCard({ onViewAll }: CommunityCardProps) {
+export function CommunityCard({ onViewAll, user }: CommunityCardProps) {
   const [posts, setPosts] = useState<APIPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showNewPost, setShowNewPost] = useState(false);
-  const [newPost, setNewPost] = useState({ title: '', body: '', author: 'Rajesh Kumar' });
+  const [newPost, setNewPost] = useState({ title: '', body: '', author: user?.name || 'Farmer' });
 
   useEffect(() => {
     fetchPosts();
@@ -46,7 +47,7 @@ export function CommunityCard({ onViewAll }: CommunityCardProps) {
     try {
       const created = await communityAPI.createPost(newPost);
       setPosts([created, ...posts]);
-      setNewPost({ title: '', body: '', author: 'Rajesh Kumar' });
+      setNewPost({ title: '', body: '', author: user?.name || 'Farmer' });
       setShowNewPost(false);
     } catch (err) {
       console.error('Failed to create post:', err);

@@ -4,14 +4,15 @@ import { transportAPI, TransportRequest } from '../services/api';
 
 interface TransportCardProps {
   onViewAll?: () => void;
+  user?: any;
 }
 
-export function TransportCard({ onViewAll }: TransportCardProps) {
+export function TransportCard({ onViewAll, user }: TransportCardProps) {
   const [showBooking, setShowBooking] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState<TransportRequest>({
-    farmerName: 'Rajesh Kumar',
+    farmerName: user?.name || 'Farmer',
     crop: '',
     quantity: '',
     pickupLocation: '',
@@ -30,7 +31,7 @@ export function TransportCard({ onViewAll }: TransportCardProps) {
         setSuccess(false);
         setShowBooking(false);
         setFormData({
-          farmerName: 'Rajesh Kumar',
+          farmerName: user?.name || 'Farmer',
           crop: '',
           quantity: '',
           pickupLocation: '',

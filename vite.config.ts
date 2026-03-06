@@ -18,7 +18,7 @@ export default defineConfig({
   },
 
   server: {
-    allowedHosts: ["unprideful-tawny-ipsilateral.ngrok-free.dev"],
+    allowedHosts: ["unprideful-tawny-ipsilateral.ap-free.dev"],
   },
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.

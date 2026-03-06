@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { communityAPI, Post, Reply } from '../services/api';
 
-export function CommunityPage() {
+export function CommunityPage({ user }: { user?: any }) {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -56,7 +56,7 @@ export function CommunityPage() {
             await communityAPI.createPost({
                 title: newPost.title,
                 body: newPost.body,
-                author: 'Rajesh Kumar'
+                author: user?.name || 'Farmer'
             });
             setNewPost({ title: '', body: '' });
             setShowNewPostModal(false);
@@ -123,8 +123,8 @@ export function CommunityPage() {
                             key={cat}
                             onClick={() => setSelectedCategory(cat)}
                             className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${selectedCategory === cat
-                                    ? 'bg-green-600 text-white shadow-md'
-                                    : 'bg-white/60 text-slate-600 hover:bg-white/80 border border-white/50'
+                                ? 'bg-green-600 text-white shadow-md'
+                                : 'bg-white/60 text-slate-600 hover:bg-white/80 border border-white/50'
                                 }`}
                         >
                             {cat}
