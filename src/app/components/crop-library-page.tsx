@@ -13,6 +13,21 @@ import {
 } from 'lucide-react';
 import { cropsAPI, Crop } from '../services/api';
 
+const CROP_IMAGES: Record<string, string> = {
+    'Wheat': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=800',
+    'Rice': 'https://spanishboosting.com/wp-content/uploads/2024/04/organic-rice.jpg',
+    'Cotton': 'https://agriculture.ec.europa.eu/sites/default/files/styles/oe_theme_medium_no_crop/public/2025-06/cotton-field-greece_600x400px_0.jpg?itok=Eq50ehaK',
+    'Sugarcane': 'https://www.saveur.com/uploads/2022/03/05/sugarcane-linda-xiao.jpg?format=auto&optimize=high&width=1440',
+    'Maize': 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=800',
+    'Tomato': 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=800',
+    'Potato': 'https://images.unsplash.com/photo-1518977676601-b53f02bad177?auto=format&fit=crop&q=80&w=800',
+    'Bajra': 'https://images.unsplash.com/photo-1626017382025-a4f54f76789e?auto=format&fit=crop&q=80&w=800',
+    'Jowar': 'https://images.unsplash.com/photo-1599584310571-0857a2c0f99d?auto=format&fit=crop&q=80&w=800',
+    'Mustard': 'https://images.unsplash.com/photo-1587823567406-382aeb161109?auto=format&fit=crop&q=80&w=800',
+    'Soybean': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaPsM4BAk-6Dvh79JtDHxp2fI_L9nfa2od2w&s',
+    'Onion' : 'https://images.immediate.co.uk/production/volatile/sites/30/2019/08/Onion-72ea178.jpg?resize=1366,1503'
+};
+
 export function CropLibraryPage() {
     const [crops, setCrops] = useState<Crop[]>([]);
     const [loading, setLoading] = useState(true);
@@ -31,7 +46,12 @@ export function CropLibraryPage() {
         try {
             setLoading(true);
             const data = await cropsAPI.getAll();
-            setCrops(data);
+            // Override with high-quality real images
+            const enrichedData = data.map(crop => ({
+                ...crop,
+                image: CROP_IMAGES[crop.name] || crop.image
+            }));
+            setCrops(enrichedData);
         } catch (err) {
             setError('Failed to fetch crops');
             console.error(err);
@@ -106,7 +126,7 @@ export function CropLibraryPage() {
                         <div
                             key={crop.id}
                             onClick={() => setSelectedCrop(crop)}
-                            className="group bg-white/60 backdrop-blur-xl border border-white/50 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-green-200 transition-all cursor-pointer relative"
+                            className="group bg-white/40 backdrop-blur-md border border-white/40 rounded-3xl overflow-hidden shadow-none hover:shadow-xl hover:shadow-green-900/5 hover:border-green-200/50 transition-all duration-500 cursor-pointer relative"
                         >
                             {/* Image Header */}
                             <div className="h-48 relative overflow-hidden">
@@ -169,10 +189,10 @@ export function CropLibraryPage() {
             {selectedCrop && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div
-                        className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
                         onClick={() => setSelectedCrop(null)}
                     ></div>
-                    <div className="relative w-full max-w-4xl max-h-[95vh] bg-white rounded-2xl md:rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-200">
+                    <div className="relative w-full max-w-4xl max-h-[95vh] bg-white/95 backdrop-blur-xl rounded-2xl md:rounded-[2.5rem] shadow-2xl shadow-slate-900/20 overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-300">
                         <div className="md:w-2/5 h-48 md:h-auto relative">
                             <img
                                 src={selectedCrop.image}

@@ -11,10 +11,12 @@ import { CropLibraryPage } from './components/crop-library-page';
 import { WeatherPage } from './components/weather-page';
 import { TransportPage } from './components/transport-page';
 import { Sparkles } from 'lucide-react';
+import { AIInsightsModal } from './components/ai-insights-modal';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/30 to-emerald-50/40 flex">
@@ -58,7 +60,10 @@ export default function App() {
                       Here's what's happening with your farm today
                     </p>
                   </div>
-                  <button className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-green-500/30 transition-all">
+                  <button
+                    onClick={() => setIsAIModalOpen(true)}
+                    className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-green-500/30 transition-all"
+                  >
                     <Sparkles className="w-5 h-5" />
                     Get AI Insights
                   </button>
@@ -127,6 +132,11 @@ export default function App() {
           )}
         </main>
       </div>
+
+      <AIInsightsModal
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+      />
     </div>
   );
 }

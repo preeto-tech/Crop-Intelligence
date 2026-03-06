@@ -1,3 +1,40 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+
+/* Google Translate Cleanup */
+.goog-te-banner-frame.skiptranslate, 
+.goog-te-gadget-icon,
+.goog-te-gadget-simple img,
+.goog-te-menu-value span:nth-child(2),
+.goog-te-menu-value span:nth-child(3),
+.goog-te-menu-value span:nth-child(5),
+.goog-te-gadget-simple .skiptranslate {
+  display: none !important;
+}
+
+.goog-te-gadget-simple {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+#google_translate_element {
+  display: none !important;
+}
+
+.goog-tooltip, 
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+

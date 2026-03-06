@@ -1,4 +1,5 @@
 import { Search, Bell, Globe, Menu } from 'lucide-react';
+import { setTranslationLanguage, getCurrentLanguage, LanguageCode } from '../utils/translation';
 
 interface NavbarProps {
   profileImage: string;
@@ -6,6 +7,12 @@ interface NavbarProps {
 }
 
 export function Navbar({ profileImage, onMenuClick }: NavbarProps) {
+  const currentLang = getCurrentLanguage();
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTranslationLanguage(e.target.value as LanguageCode);
+  };
+
   return (
     <header className="h-16 md:h-20 bg-white/70 backdrop-blur-lg border-b border-slate-200/60 sticky top-0 z-10 w-full">
       <div className="h-full px-4 md:px-8 flex items-center justify-between gap-4">
@@ -32,10 +39,14 @@ export function Navbar({ profileImage, onMenuClick }: NavbarProps) {
         <div className="flex items-center gap-2 md:gap-4 lg:ml-8">
           <div className="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 bg-slate-50 rounded-lg border border-slate-200">
             <Globe className="w-4 h-4 text-slate-600" />
-            <select className="bg-transparent text-xs md:text-sm font-medium text-slate-700 focus:outline-none cursor-pointer">
-              <option>English</option>
-              <option>हिंदी</option>
-              <option>தமிழ்</option>
+            <select
+              value={currentLang}
+              onChange={handleLanguageChange}
+              className="bg-transparent text-xs md:text-sm font-medium text-slate-700 focus:outline-none cursor-pointer"
+            >
+              <option value="en">English</option>
+              <option value="hi">हिंदी</option>
+              <option value="ta">தமிழ்</option>
             </select>
           </div>
 
