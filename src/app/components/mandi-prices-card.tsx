@@ -23,7 +23,6 @@ export function MandiPricesCard({ images, onViewAll }: MandiPricesCardProps) {
   const [mandiData, setMandiData] = useState<MandiData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedDistrict, setSelectedDistrict] = useState<string>('Pune');
 
   useEffect(() => {
     fetchMandiData();
@@ -46,18 +45,9 @@ export function MandiPricesCard({ images, onViewAll }: MandiPricesCardProps) {
   const getCropImage = (cropName: string): string => {
     const lower = cropName.toLowerCase();
     if (lower.includes('wheat')) return images.wheat;
-    if (lower.includes('rice')) return images.rice;
+    if (lower.includes('rice') || lower.includes('paddy')) return images.rice;
     if (lower.includes('tomato')) return images.tomato;
     return images.wheat; // default
-  };
-
-  const calculateChange = (cropName: string): number => {
-    if (!mandiData?.trends[cropName]) return 0;
-    const trend = mandiData.trends[cropName];
-    if (trend.length < 2) return 0;
-    const current = trend[trend.length - 1];
-    const previous = trend[trend.length - 2];
-    return ((current - previous) / previous) * 100;
   };
 
   if (loading) {
@@ -75,7 +65,7 @@ export function MandiPricesCard({ images, onViewAll }: MandiPricesCardProps) {
     );
   }
 
-  if (error || !mandiData) {
+  if (error || !mandiData || !mandiData.data || !mandiData.data.records) {
     return (
       <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg">
         <p className="text-red-600">{error || 'No mandi data available'}</p>
@@ -90,21 +80,27 @@ export function MandiPricesCard({ images, onViewAll }: MandiPricesCardProps) {
   }
 
   // Get top 3 crops for display
-  const topCrops = mandiData?.crops?.slice(0, 3) || [];
-  const displayPrices: PriceItem[] = topCrops.map(cropName => ({
-    name: cropName,
-    price: mandiData?.priceTable?.[selectedDistrict]?.[cropName] || 0,
-    change: calculateChange(cropName),
-    unit: '/quintal',
-    image: getCropImage(cropName),
-  }));
+  const topCrops = mandiData.data.records.slice(0, 3);
+  const displayPrices: PriceItem[] = topCrops.map(record => {
+    const currentPrice = parseFloat(record.as_on_price);
+    const prevPrice = parseFloat(record.one_day_ago_price);
+    const change = prevPrice ? ((currentPrice - prevPrice) / prevPrice) * 100 : 0;
+
+    return {
+      name: record.cmdt_name,
+      price: currentPrice,
+      change: change,
+      unit: '/quintal',
+      image: getCropImage(record.cmdt_name),
+    };
+  });
 
   return (
     <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg hover:shadow-xl transition-shadow">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-semibold text-slate-900">Mandi Prices</h3>
-          <p className="text-sm text-slate-500">Today's rates - {selectedDistrict}</p>
+          <p className="text-sm text-slate-500">Today's rates</p>
         </div>
         <button
           onClick={onViewAll}

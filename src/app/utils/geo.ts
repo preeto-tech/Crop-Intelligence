@@ -44,7 +44,7 @@ export async function getCurrentCity(): Promise<LocationData> {
                 console.error('Geolocation error:', error);
                 reject(error);
             },
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 5001, maximumAge: 0 }
         );
     });
 }

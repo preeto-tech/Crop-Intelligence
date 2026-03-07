@@ -1,7 +1,7 @@
 Crop Intelligence API Documentation
 This document provides a comprehensive overview of the backend API for the Crop Intelligence platform.
 
-Base URL: http://localhost:5000
+Base URL: http://localhost:5001
 
 🔐 Authentication
 Base Path: /api/auth

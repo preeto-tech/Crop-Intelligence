@@ -1,0 +1,136 @@
+{
+  "crops": [
+    {
+      "id": 1,
+      "name": "Wheat",
+      "image": "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b",
+      "description": "Detailed growing profile and AI guidance for Wheat."
+    },
+    {
+      "id": 2,
+      "name": "Rice",
+      "image": "https://images.unsplash.com/photo-1586208537573-0ed7b5247814",
+      "description": "Detailed growing profile and AI guidance for Rice."
+    },
+    {
+      "id": 3,
+      "name": "Tomato",
+      "image": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea",
+      "description": "Detailed growing profile and AI guidance for Tomato."
+    },
+    {
+      "id": 4,
+      "name": "Cotton",
+      "image": "https://images.unsplash.com/photo-1584551185347-19aa14bc81aa",
+      "description": "Detailed growing profile and AI guidance for Cotton."
+    },
+    {
+      "id": 5,
+      "name": "Sugarcane",
+      "image": "https://images.unsplash.com/photo-1505322839257-2c9ff5068f64",
+      "description": "Detailed growing profile and AI guidance for Sugarcane."
+    },
+    {
+      "id": 6,
+      "name": "Maize",
+      "image": "https://images.unsplash.com/photo-1627920769493-2c1b2f767a92",
+      "description": "Detailed growing profile and AI guidance for Maize."
+    },
+    {
+      "id": 7,
+      "name": "Millets",
+      "image": "https://images.unsplash.com/photo-1588169135064-071a9a464956",
+      "description": "Detailed growing profile and AI guidance for Millets."
+    },
+    {
+      "id": 8,
+      "name": "Potato",
+      "image": "https://images.unsplash.com/photo-1518977676601-b53f82aba655",
+      "description": "Detailed growing profile and AI guidance for Potato."
+    },
+    {
+      "id": 9,
+      "name": "Onion",
+      "image": "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc",
+      "description": "Detailed growing profile and AI guidance for Onion."
+    },
+    {
+      "id": 10,
+      "name": "Soybean",
+      "image": "https://images.unsplash.com/photo-1599307730999-5ef861c8ed32",
+      "description": "Detailed growing profile and AI guidance for Soybean."
+    },
+    {
+      "id": 11,
+      "name": "Turmeric",
+      "image": "https://images.unsplash.com/photo-1615486511116-2d147bb43d6c",
+      "description": "Detailed growing profile and AI guidance for Turmeric."
+    },
+    {
+      "id": 12,
+      "name": "Mustard",
+      "image": "https://images.unsplash.com/photo-1586864387789-228fff0b6c1c",
+      "description": "Detailed growing profile and AI guidance for Mustard."
+    },
+    {
+      "id": 13,
+      "name": "Chana",
+      "image": "https://images.unsplash.com/photo-1616422340798-750ebcd9fe18",
+      "description": "Detailed growing profile and AI guidance for Chana."
+    },
+    {
+      "id": 14,
+      "name": "Groundnut",
+      "image": "https://images.unsplash.com/photo-1634563820293-18105e1fc4c8",
+      "description": "Detailed growing profile and AI guidance for Groundnut."
+    },
+    {
+      "id": 15,
+      "name": "Brinjal",
+      "image": "https://images.unsplash.com/photo-1630138379435-0de3bdcda067",
+      "description": "Detailed growing profile and AI guidance for Brinjal."
+    },
+    {
+      "id": 16,
+      "name": "Cabbage",
+      "image": "https://images.unsplash.com/photo-1592634358823-380ff9baab1d",
+      "description": "Detailed growing profile and AI guidance for Cabbage."
+    },
+    {
+      "id": 17,
+      "name": "Cauliflower",
+      "image": "https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3",
+      "description": "Detailed growing profile and AI guidance for Cauliflower."
+    },
+    {
+      "id": 18,
+      "name": "Spinach",
+      "image": "https://images.unsplash.com/photo-1576043005963-f4b2a8d1195d",
+      "description": "Detailed growing profile and AI guidance for Spinach."
+    },
+    {
+      "id": 19,
+      "name": "Peas",
+      "image": "https://images.unsplash.com/photo-1587411768407-6ba7dc603f90",
+      "description": "Detailed growing profile and AI guidance for Peas."
+    },
+    {
+      "id": 20,
+      "name": "Carrot",
+      "image": "https://images.unsplash.com/photo-1590868309235-ea34bed7bd7f",
+      "description": "Detailed growing profile and AI guidance for Carrot."
+    },
+    {
+      "id": 21,
+      "name": "Garlic",
+      "image": "https://images.unsplash.com/photo-1518296316270-b1d5c22f641a",
+      "description": "Detailed growing profile and AI guidance for Garlic."
+    },
+    {
+      "id": 22,
+      "name": "Ginger",
+      "image": "https://images.unsplash.com/photo-1615486171448-4fdcf5142171",
+      "description": "Detailed growing profile and AI guidance for Ginger."
+    }
+  ]
+}

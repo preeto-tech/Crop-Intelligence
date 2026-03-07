@@ -22,7 +22,7 @@ export function ProfilePage({ token, onLogout, onNavigate }: { token: string | n
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/profile', {
+                const response = await fetch('http://localhost:5001/api/auth/profile', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -114,7 +114,7 @@ export function ProfilePage({ token, onLogout, onNavigate }: { token: string | n
                     <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white bg-slate-100 shadow-xl flex items-center justify-center mx-auto md:mx-0 absolute -top-12 md:-top-16 left-0 right-0 md:left-10 md:right-auto overflow-hidden">
                         <User className="w-12 h-12 md:w-16 md:h-16 text-slate-300" />
                         <img
-                            src={`https://api.dicebear.com/7.x/initials/svg?seed=${profile.name}&backgroundColor=059669`}
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.name)}`}
                             alt={profile.name}
                             className="w-full h-full object-cover"
                         />

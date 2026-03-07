@@ -1,14 +1,6 @@
-import { MessageCircle, ThumbsUp, User, Send } from 'lucide-react';
+import { MessageCircle, ThumbsUp, User, Send, Eye, Tag } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { communityAPI, Post as APIPost } from '../services/api';
-
-interface Post {
-  id?: string;
-  author: string;
-  title: string;
-  body: string;
-  createdAt?: string;
-}
+import { communityAPI, Post } from '../services/api';
 
 interface CommunityCardProps {
   onViewAll?: () => void;
@@ -16,11 +8,9 @@ interface CommunityCardProps {
 }
 
 export function CommunityCard({ onViewAll, user }: CommunityCardProps) {
-  const [posts, setPosts] = useState<APIPost[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showNewPost, setShowNewPost] = useState(false);
-  const [newPost, setNewPost] = useState({ title: '', body: '', author: user?.name || 'Farmer' });
 
   useEffect(() => {
     fetchPosts();
@@ -31,26 +21,12 @@ export function CommunityCard({ onViewAll, user }: CommunityCardProps) {
       setLoading(true);
       setError(null);
       const data = await communityAPI.getPosts();
-      setPosts(data);
+      setPosts(data.posts || []);
     } catch (err) {
       setError('Failed to fetch community posts');
       console.error(err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCreatePost = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newPost.title.trim() || !newPost.body.trim()) return;
-
-    try {
-      const created = await communityAPI.createPost(newPost);
-      setPosts([created, ...posts]);
-      setNewPost({ title: '', body: '', author: user?.name || 'Farmer' });
-      setShowNewPost(false);
-    } catch (err) {
-      console.error('Failed to create post:', err);
     }
   };
 
@@ -60,128 +36,113 @@ export function CommunityCard({ onViewAll, user }: CommunityCardProps) {
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    if (days > 0) return `${days}d ago`;
+    if (hours > 0) return `${hours}h ago`;
     return 'Just now';
   };
 
   if (loading) {
     return (
-      <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg">
-        <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-slate-200 rounded w-1/3"></div>
-          <div className="space-y-3">
-            <div className="h-24 bg-slate-200 rounded"></div>
-            <div className="h-24 bg-slate-200 rounded"></div>
-            <div className="h-24 bg-slate-200 rounded"></div>
-          </div>
+      <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg animate-pulse">
+        <div className="h-4 bg-slate-200 rounded w-1/3 mb-4"></div>
+        <div className="space-y-4">
+          <div className="h-20 bg-slate-100 rounded-xl"></div>
+          <div className="h-20 bg-slate-100 rounded-xl"></div>
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg">
-        <p className="text-red-600">{error}</p>
-        <button
-          onClick={fetchPosts}
-          className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-        >
-          Retry
-        </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg hover:shadow-xl transition-shadow">
+    <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">Community Updates</h3>
-          <p className="text-sm text-slate-500">Recent discussions</p>
+          <h3 className="text-lg font-bold text-slate-900">Community Updates</h3>
+          <p className="text-xs text-slate-500 font-medium">Connect with fellow farmers</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowNewPost(!showNewPost)}
-            className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
-          >
-            {showNewPost ? 'Cancel' : 'New Post'}
-          </button>
-          <button
-            onClick={onViewAll}
-            className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
-          >
-            View All →
-          </button>
-        </div>
+        <button
+          onClick={onViewAll}
+          className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-all group"
+        >
+          <Send className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        </button>
       </div>
 
-      {showNewPost && (
-        <form onSubmit={handleCreatePost} className="mb-4 p-4 bg-green-50/50 rounded-xl border border-green-200">
-          <input
-            type="text"
-            placeholder="Post title..."
-            value={newPost.title}
-            onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-            className="w-full px-3 py-2 mb-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-          <textarea
-            placeholder="Share your thoughts..."
-            value={newPost.body}
-            onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
-            className="w-full px-3 py-2 mb-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-            rows={3}
-          />
-          <button
-            type="submit"
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
+      <div className="space-y-4">
+        {posts.slice(0, 3).map((post) => (
+          <div
+            key={post._id || post.id}
+            className="group p-4 bg-white/40 border border-white/40 rounded-2xl hover:bg-white/80 hover:border-green-100 transition-all cursor-pointer"
+            onClick={onViewAll}
           >
-            <Send className="w-4 h-4" />
-            Post
-          </button>
-        </form>
-      )}
-
-      <div className="space-y-4 max-h-96 overflow-y-auto">
-        {posts.length === 0 ? (
-          <p className="text-center text-slate-500 py-8">No posts yet. Be the first to post!</p>
-        ) : (
-          posts.map((post) => (
-            <div
-              key={post.id || Math.random()}
-              className="p-4 bg-slate-50/80 rounded-xl hover:bg-slate-100/80 transition-colors"
-            >
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-semibold text-slate-900">{post.author}</h4>
-                    <span className="text-xs text-slate-400">•</span>
-                    <span className="text-xs text-slate-500">{getTimeAgo(post.createdAt)}</span>
-                  </div>
-                  <h5 className="font-medium text-slate-800 mt-1">{post.title}</h5>
-                  <p className="text-sm text-slate-700 mt-1 line-clamp-2">
-                    {post.body}
-                  </p>
-                </div>
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-slate-100 border border-green-100 overflow-hidden flex-shrink-0 shadow-sm">
+                <img
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(post.author)}`}
+                  alt={post.author}
+                  className="w-full h-full object-cover"
+                />
               </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-0.5">
+                  <h4 className="text-sm font-bold text-slate-900 truncate">{post.author}</h4>
+                  <div className="flex items-center gap-2">
+                    {post.expertAnswered && (
+                      <span className="px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded text-[8px] font-black border border-amber-100 uppercase tracking-tighter">
+                        Expert Answer
+                      </span>
+                    )}
+                    <span className="text-[10px] font-bold text-slate-400">{getTimeAgo(post.createdAt)}</span>
+                  </div>
+                </div>
+                <h5 className="text-xs font-bold text-green-700 line-clamp-1 mb-1">{post.title}</h5>
 
-              <div className="flex items-center gap-4 ml-13">
-                <button className="flex items-center gap-1.5 text-slate-500 hover:text-green-600 transition-colors">
-                  <ThumbsUp className="w-4 h-4" />
-                  <span className="text-xs font-medium">0</span>
-                </button>
-                <button className="flex items-center gap-1.5 text-slate-500 hover:text-green-600 transition-colors">
-                  <MessageCircle className="w-4 h-4" />
-                  <span className="text-xs font-medium">0</span>
-                </button>
+                {post.image && (
+                  <div className="mb-2 rounded-lg overflow-hidden h-20 border border-slate-100">
+                    <img src={post.image} alt="" className="w-full h-full object-cover" />
+                  </div>
+                )}
+
+                <p className="text-[11px] text-slate-600 line-clamp-2 leading-relaxed">
+                  {post.body}
+                </p>
+
+                <div className="flex items-center justify-between mt-3">
+                  <div className="flex gap-1.5 overflow-hidden">
+                    {post.tags?.slice(0, 2).map((tag) => (
+                      <span key={tag} className="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-medium italic truncate">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2.5 text-slate-400">
+                    <div className="flex items-center gap-1">
+                      <ThumbsUp className="w-3 h-3" />
+                      <span className="text-[10px] font-bold">{post.upvotes || 0}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MessageCircle className="w-3 h-3" />
+                      <span className="text-[10px] font-bold">{post.answers?.length || 0}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          ))
+          </div>
+        ))}
+
+        {posts.length === 0 && (
+          <div className="text-center py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+            <p className="text-xs text-slate-400">No discussions found</p>
+          </div>
         )}
+
+        <button
+          onClick={onViewAll}
+          className="w-full py-3 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/10"
+        >
+          Explore All Discussions
+        </button>
       </div>
     </div>
   );

@@ -1,13 +1,34 @@
-import { useState } from 'react';
-import { Mail, Lock, User, ArrowRight, Wheat, Loader2, Tag } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Sms, Lock, ArrowRight, Magicpen, UserSquare, ShieldTick } from 'iconsax-react';
+import { Loader2 } from 'lucide-react';
+import { Wheat, Tag, MapPin } from 'lucide-react';
+import { PlacesAutocomplete } from './places-autocomplete';
+import { Button } from './ui/button';
 
 export function SignupPage({ onNavigate, onLoginSuccess }: { onNavigate: (path: string) => void, onLoginSuccess: (token: string, user: any) => void }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('farmer'); // Default role
+    const [role, setRole] = useState('farmer');
+    const [location, setLocation] = useState('');
+    const [phone, setPhone] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchLocation = async () => {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                if (data.city && data.region) {
+                    setLocation(`${data.city}, ${data.region}`);
+                }
+            } catch (err) {
+                console.error('Failed to auto-fetch location:', err);
+            }
+        };
+        fetchLocation();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -15,12 +36,10 @@ export function SignupPage({ onNavigate, onLoginSuccess }: { onNavigate: (path: 
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/signup', {
+            const response = await fetch('http://localhost:5001/api/auth/signup', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name, email, password, role }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password, role, location, phone }),
             });
 
             let data;
@@ -35,7 +54,6 @@ export function SignupPage({ onNavigate, onLoginSuccess }: { onNavigate: (path: 
                 throw new Error(data?.message || 'Failed to sign up');
             }
 
-            // Automatically log them in or set token
             onLoginSuccess(data.token, data.user);
         } catch (err: any) {
             setError(err.message || 'An error occurred during sign up');
@@ -45,171 +63,234 @@ export function SignupPage({ onNavigate, onLoginSuccess }: { onNavigate: (path: 
     };
 
     return (
-        <div className="min-h-[calc(100vh-80px)] w-full flex items-center justify-center p-4 lg:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="w-full max-w-6xl bg-white/60 backdrop-blur-xl rounded-3xl border border-white/50 shadow-2xl overflow-hidden flex flex-col lg:flex-row-reverse">
+        <div className="h-screen w-full flex font-[Inter,system-ui,sans-serif] overflow-hidden">
 
-                {/* Right Side - Image & Branding (Reversed for distinction) */}
-                <div className="w-full lg:w-5/12 relative hidden md:block">
-                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/90 via-emerald-800/40 to-transparent z-10" />
-                    <img
-                        src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw4fHxhZ3JpY3VsdHVyZXxlbnwwfHx8fDE3NzI0NzEwMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                        alt="Agriculture technology"
-                        className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 z-20 flex flex-col justify-end p-10 text-white">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
-                                <Wheat className="w-6 h-6 text-white" />
+            {/* ──── Left: Form ──── */}
+            <div className="w-full lg:w-[45%] flex items-center justify-center bg-[#fafbfc] p-6 sm:p-10 lg:p-16 relative overflow-y-auto">
+                {/* Mobile logo */}
+                <div className="absolute top-6 left-6 lg:hidden flex items-center gap-2">
+                    <img src="/logo.png" alt="FarmIQ" className="h-8 w-auto" />
+                    <span className="text-lg font-extrabold text-slate-900 tracking-tight">
+                        Farm<span className="text-green-500">IQ</span>
+                    </span>
+                </div>
+
+                <div className="w-full max-w-[420px]">
+                    <div className="mb-8">
+                        <h1 className="text-3xl sm:text-[2.2rem] font-extrabold text-slate-900 tracking-tight mb-2">
+                            Create account
+                        </h1>
+                        <p className="text-slate-500 text-[0.95rem]">
+                            Join our growing community of smart farmers
+                        </p>
+                    </div>
+
+                    {error && (
+                        <div className="mb-5 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                            {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-semibold text-slate-700">Full Name</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <UserSquare size={18} className="text-slate-400 group-focus-within:text-green-600 transition-colors" variant="Bold" />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                    className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 rounded-xl transition-all outline-none text-sm placeholder:text-slate-400"
+                                    placeholder="Rajesh Kumar"
+                                />
                             </div>
                         </div>
-                        <h3 className="text-4xl font-bold mb-4 leading-tight">Grow Your Future</h3>
-                        <p className="text-emerald-50 max-w-md text-lg opacity-90">
-                            Create an account to track crops, manage logistics, and get AI-driven insights customized for your farm.
+
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-semibold text-slate-700">Email</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Sms size={18} className="text-slate-400 group-focus-within:text-green-600 transition-colors" variant="Bold" />
+                                </div>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 rounded-xl transition-all outline-none text-sm placeholder:text-slate-400"
+                                    placeholder="you@example.com"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-semibold text-slate-700">Location (District, State)</label>
+                                {location && (
+                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md flex items-center gap-1 animate-in fade-in zoom-in duration-300">
+                                        <MapPin className="w-2.5 h-2.5" />
+                                        Auto-detected
+                                    </span>
+                                )}
+                            </div>
+                            <PlacesAutocomplete
+                                onSelect={(address) => setLocation(address)}
+                                defaultValue={location}
+                                placeholder="Search your village/city..."
+                                className="group"
+                            />
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-semibold text-slate-700">Phone (Optional)</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Sms size={18} className="text-slate-400 group-focus-within:text-green-600 transition-colors" variant="Bold" />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 rounded-xl transition-all outline-none text-sm placeholder:text-slate-400"
+                                    placeholder="9876543210"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-semibold text-slate-700">Password</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Lock size={18} className="text-slate-400 group-focus-within:text-green-600 transition-colors" variant="Bold" />
+                                </div>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 rounded-xl transition-all outline-none text-sm placeholder:text-slate-400"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Role Selector */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">I am a</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setRole('farmer')}
+                                    className={`border rounded-xl p-3 flex flex-col items-center gap-1.5 transition-all ${role === 'farmer'
+                                        ? 'border-green-500 bg-green-50 ring-4 ring-green-100 shadow-sm'
+                                        : 'border-slate-200 bg-white hover:border-green-300 hover:bg-green-50/30'
+                                        }`}
+                                >
+                                    <Wheat className={`w-5 h-5 ${role === 'farmer' ? 'text-green-600' : 'text-slate-400'}`} />
+                                    <span className={`text-[10px] font-bold ${role === 'farmer' ? 'text-green-700' : 'text-slate-500'} uppercase tracking-wider`}>Farmer</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setRole('buyer')}
+                                    className={`border rounded-xl p-3 flex flex-col items-center gap-1.5 transition-all ${role === 'buyer'
+                                        ? 'border-blue-500 bg-blue-50 ring-4 ring-blue-100 shadow-sm'
+                                        : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/30'
+                                        }`}
+                                >
+                                    <Tag className={`w-5 h-5 ${role === 'buyer' ? 'text-blue-600' : 'text-slate-400'}`} />
+                                    <span className={`text-[10px] font-bold ${role === 'buyer' ? 'text-blue-700' : 'text-slate-500'} uppercase tracking-wider`}>Buyer</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setRole('transporter')}
+                                    className={`border rounded-xl p-3 flex flex-col items-center gap-1.5 transition-all ${role === 'transporter'
+                                        ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 shadow-sm'
+                                        : 'border-slate-200 bg-white hover:border-orange-300 hover:bg-orange-50/30'
+                                        }`}
+                                >
+                                    <div className={`w-5 h-5 flex items-center justify-center`}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${role === 'transporter' ? 'text-orange-600' : 'text-slate-400'}`}>
+                                            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" /><path d="M15 18H9" /><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-2.035-2.585A1 1 0 0 0 17.971 10H15v8" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" />
+                                        </svg>
+                                    </div>
+                                    <span className={`text-[10px] font-bold ${role === 'transporter' ? 'text-orange-700' : 'text-slate-500'} uppercase tracking-wider`}>Driver</span>
+                                </button>
+                            </div>
+                        </div>
+                        <Button
+                            type="submit"
+
+                            disabled={isLoading}
+                            className="w-full h-13 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-[0.92rem] shadow-lg shadow-green-600/20 hover:shadow-green-600/30 transition-all active:scale-[0.98] gap-2 mt-1"
+                        >
+                            {isLoading ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <>
+                                    Create Account
+                                    <ArrowRight size={18} />
+                                </>
+                            )}
+                        </Button>
+                    </form>
+
+                    <p className="mt-7 text-center text-sm text-slate-500">
+                        Already have an account?{' '}
+                        <button
+                            onClick={() => onNavigate('login')}
+                            className="text-green-600 font-bold hover:text-green-700 transition-colors"
+                        >
+                            Sign in
+                        </button>
+                    </p>
+
+                    <p className="mt-10 text-center text-xs text-slate-400">
+                        © {new Date().getFullYear()} FarmIQ. All rights reserved.
+                    </p>
+                </div>
+            </div>
+
+            {/* ──── Right: Full-height Image ──── */}
+            <div className="hidden lg:block lg:w-[55%] relative">
+                <img
+                    src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200&q=85&fit=crop"
+                    alt="Agriculture technology"
+                    className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-bl from-black/60 via-black/30 to-green-950/40" />
+
+                {/* Branding overlay */}
+                <div className="absolute inset-0 z-10 flex flex-col justify-between p-12">
+                    {/* Top right */}
+                    <div className="self-end">
+                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2">
+                            <ShieldTick size={16} variant="Bold" color="#4ade80" />
+                            <span className="text-xs font-bold text-white/80">Secure & Verified</span>
+                        </div>
+                    </div>
+
+                    {/* Bottom content */}
+                    <div className="max-w-md">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-green-500/20 backdrop-blur-md border border-green-400/30 flex items-center justify-center">
+                                <Magicpen size={18} variant="Bold" color="#4ade80" />
+                            </div>
+                            <span className="text-xs font-bold text-green-300 tracking-widest uppercase">AI-Powered</span>
+                        </div>
+                        <h2 className="text-4xl font-extrabold text-white leading-[1.15] mb-4 tracking-tight">
+                            Grow Your Future with Data
+                        </h2>
+                        <p className="text-white/60 text-base leading-relaxed">
+                            Create an account to track crops, monitor mandi prices in real-time, and get AI-driven insights customized for your farm.
                         </p>
                     </div>
                 </div>
-
-                {/* Left Side - Form */}
-                <div className="w-full lg:w-7/12 p-8 md:p-10 lg:p-14 flex flex-col justify-center bg-white/40">
-                    <div className="max-w-md w-full mx-auto">
-                        <div className="mb-8 text-center lg:text-left">
-                            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-3">
-                                Create Account
-                            </h2>
-                            <p className="text-slate-600 text-lg">
-                                Join our agricultural community today
-                            </p>
-                        </div>
-
-                        {error && (
-                            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg">
-                                <p>{error}</p>
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-slate-700 ml-1">Full Name</label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <User className="h-5 w-5 text-slate-400 group-focus-within:text-green-600 transition-colors" />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        required
-                                        className="w-full pl-11 pr-4 py-3.5 bg-white/50 border border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 rounded-xl transition-all outline-none"
-                                        placeholder="Rajesh Kumar"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-slate-700 ml-1">Email Address</label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-green-600 transition-colors" />
-                                    </div>
-                                    <input
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                        className="w-full pl-11 pr-4 py-3.5 bg-white/50 border border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 rounded-xl transition-all outline-none"
-                                        placeholder="farmer@example.com"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-green-600 transition-colors" />
-                                    </div>
-                                    <input
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        className="w-full pl-11 pr-4 py-3.5 bg-white/50 border border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 rounded-xl transition-all outline-none"
-                                        placeholder="••••••••"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-slate-700 ml-1">Role</label>
-                                <div className="grid grid-cols-2 gap-4 mt-2">
-                                    <label
-                                        className={`cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center transition-all ${role === 'farmer'
-                                            ? 'border-green-500 bg-green-50 text-green-800 shadow-sm'
-                                            : 'border-slate-200 bg-white/50 text-slate-500 hover:border-green-300 hover:bg-green-50/50'
-                                            }`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            value="farmer"
-                                            checked={role === 'farmer'}
-                                            onChange={() => setRole('farmer')}
-                                            className="hidden"
-                                        />
-                                        <Wheat className={`w-6 h-6 mb-2 ${role === 'farmer' ? 'text-green-600' : 'text-slate-400'}`} />
-                                        <span className="font-medium text-sm">Farmer</span>
-                                    </label>
-
-                                    <label
-                                        className={`cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center transition-all ${role === 'buyer'
-                                            ? 'border-blue-500 bg-blue-50 text-blue-800 shadow-sm'
-                                            : 'border-slate-200 bg-white/50 text-slate-500 hover:border-blue-300 hover:bg-blue-50/50'
-                                            }`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            value="buyer"
-                                            checked={role === 'buyer'}
-                                            onChange={() => setRole('buyer')}
-                                            className="hidden"
-                                        />
-                                        <Tag className={`w-6 h-6 mb-2 ${role === 'buyer' ? 'text-blue-600' : 'text-slate-400'}`} />
-                                        <span className="font-medium text-sm">Buyer</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full py-4 mt-2 px-6 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-xl font-semibold shadow-xl shadow-emerald-600/20 hover:shadow-emerald-600/30 transform transition-all active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
-                            >
-                                {isLoading ? (
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : (
-                                    <>
-                                        Sign Up
-                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                    </>
-                                )}
-                            </button>
-                        </form>
-
-                        <div className="mt-8 text-center">
-                            <p className="text-slate-600">
-                                Already have an account?{' '}
-                                <button
-                                    onClick={() => onNavigate('login')}
-                                    className="text-green-600 font-semibold hover:text-green-700 transition-colors"
-                                >
-                                    Sign in
-                                </button>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     );

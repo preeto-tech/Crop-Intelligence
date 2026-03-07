@@ -13,19 +13,30 @@ import {
 } from 'lucide-react';
 import { cropsAPI, Crop } from '../services/api';
 
-const CROP_IMAGES: Record<string, string> = {
-    'Wheat': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=800',
-    'Rice': 'https://spanishboosting.com/wp-content/uploads/2024/04/organic-rice.jpg',
-    'Cotton': 'https://agriculture.ec.europa.eu/sites/default/files/styles/oe_theme_medium_no_crop/public/2025-06/cotton-field-greece_600x400px_0.jpg?itok=Eq50ehaK',
-    'Sugarcane': 'https://www.saveur.com/uploads/2022/03/05/sugarcane-linda-xiao.jpg?format=auto&optimize=high&width=1440',
-    'Maize': 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=800',
-    'Tomato': 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=800',
-    'Potato': 'https://images.unsplash.com/photo-1518977676601-b53f02bad177?auto=format&fit=crop&q=80&w=800',
-    'Bajra': 'https://images.unsplash.com/photo-1626017382025-a4f54f76789e?auto=format&fit=crop&q=80&w=800',
-    'Jowar': 'https://images.unsplash.com/photo-1599584310571-0857a2c0f99d?auto=format&fit=crop&q=80&w=800',
-    'Mustard': 'https://images.unsplash.com/photo-1587823567406-382aeb161109?auto=format&fit=crop&q=80&w=800',
-    'Soybean': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaPsM4BAk-6Dvh79JtDHxp2fI_L9nfa2od2w&s',
-    'Onion': 'https://images.immediate.co.uk/production/volatile/sites/30/2019/08/Onion-72ea178.jpg?resize=1366,1503'
+const UNSPLASH_ACCESS_KEY = 'K-nyDXc1sGlD8DlS5dZmn5DW4lBxf9c0csFXObLlwWU';
+
+const fetchUnsplashImage = async (cropName: string): Promise<string> => {
+    const cacheKey = `unsplash_img_${cropName.toLowerCase()}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) return cached;
+
+    try {
+        // Search Unsplash for high-quality agriculture shots of this crop
+        const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(cropName + ' precision agriculture plant')}&client_id=${UNSPLASH_ACCESS_KEY}&per_page=1&orientation=landscape`);
+        const data = await res.json();
+
+        if (data.results && data.results.length > 0) {
+            // Unsplash requires using their raw/regular URLs
+            const url = data.results[0].urls.regular;
+            localStorage.setItem(cacheKey, url);
+            return url;
+        }
+    } catch (err) {
+        console.error(`Failed to fetch Unsplash image for ${cropName}:`, err);
+    }
+
+    // Fallback if rate limited or not found
+    return `https://ui-avatars.com/api/?name=${cropName}&background=4ade80&color=fff&size=512`;
 };
 
 export function CropLibraryPage() {
@@ -46,11 +57,16 @@ export function CropLibraryPage() {
         try {
             setLoading(true);
             const data = await cropsAPI.getAll();
-            // Override with high-quality real images
-            const enrichedData = data.map(crop => ({
-                ...crop,
-                image: CROP_IMAGES[crop.name] || crop.image
+
+            // Dynamically fetch and enrich images via Unsplash search
+            const enrichedData = await Promise.all(data.map(async (crop) => {
+                const imageUrl = await fetchUnsplashImage(crop.name);
+                return {
+                    ...crop,
+                    image: imageUrl
+                };
             }));
+
             setCrops(enrichedData);
         } catch (err) {
             setError('Failed to fetch crops');

@@ -64,9 +64,9 @@ export function Navbar({ profileImage, onMenuClick, onProfileClick, isLoggedIn, 
               className="flex items-center gap-2 md:gap-3 pl-2 pr-2 md:pl-3 md:pr-4 py-2 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 hover:shadow-md transition-all"
             >
               <img
-                src={user?.avatar || profileImage}
+                src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.name || 'Achintya Singh')}`}
                 alt="Profile"
-                className="w-8 h-8 md:w-9 md:h-9 rounded-lg object-cover"
+                className="w-8 h-8 md:w-9 md:h-9 rounded-lg object-cover bg-slate-100"
               />
               <div className="text-left hidden md:block">
                 <p className="text-sm font-semibold text-slate-900">{user?.name || 'Rajesh Kumar'}</p>
