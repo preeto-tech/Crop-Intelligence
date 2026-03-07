@@ -25,7 +25,7 @@ const CROP_IMAGES: Record<string, string> = {
     'Jowar': 'https://images.unsplash.com/photo-1599584310571-0857a2c0f99d?auto=format&fit=crop&q=80&w=800',
     'Mustard': 'https://images.unsplash.com/photo-1587823567406-382aeb161109?auto=format&fit=crop&q=80&w=800',
     'Soybean': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaPsM4BAk-6Dvh79JtDHxp2fI_L9nfa2od2w&s',
-    'Onion' : 'https://images.immediate.co.uk/production/volatile/sites/30/2019/08/Onion-72ea178.jpg?resize=1366,1503'
+    'Onion': 'https://images.immediate.co.uk/production/volatile/sites/30/2019/08/Onion-72ea178.jpg?resize=1366,1503'
 };
 
 export function CropLibraryPage() {
@@ -231,20 +231,74 @@ export function CropLibraryPage() {
                                 </div>
                             </div>
 
-                            <div className="space-y-6">
-                                <div className="p-6 bg-green-50 rounded-2xl border border-green-100">
+                            <div className="space-y-5">
+                                {/* Fertilizer */}
+                                <div className="p-5 bg-green-50 rounded-2xl border border-green-100">
                                     <h4 className="flex items-center gap-2 font-bold text-green-800 mb-2">
                                         <Droplets className="w-5 h-5" /> Recommended Fertilizer
                                     </h4>
-                                    <p className="text-green-700 leading-relaxed">{selectedCrop.fertilizer}</p>
+                                    <p className="text-green-700 leading-relaxed text-sm">{selectedCrop.fertilizer}</p>
                                 </div>
 
-                                <div className="p-6 bg-amber-50 rounded-2xl border border-amber-100">
+                                {/* Pest Control */}
+                                <div className="p-5 bg-amber-50 rounded-2xl border border-amber-100">
                                     <h4 className="flex items-center gap-2 font-bold text-amber-800 mb-2">
                                         <Wind className="w-5 h-5" /> Pest Control
                                     </h4>
-                                    <p className="text-amber-700 leading-relaxed">{selectedCrop.pests}</p>
+                                    <p className="text-amber-700 leading-relaxed text-sm">{selectedCrop.pests}</p>
                                 </div>
+
+                                {/* Best Practices */}
+                                {selectedCrop.bestPractices && selectedCrop.bestPractices.length > 0 && (
+                                    <div className="p-5 bg-blue-50 rounded-2xl border border-blue-100">
+                                        <h4 className="flex items-center gap-2 font-bold text-blue-800 mb-3">
+                                            <Sparkles className="w-5 h-5" /> Best Practices
+                                        </h4>
+                                        <ul className="space-y-2">
+                                            {selectedCrop.bestPractices.map((tip, i) => (
+                                                <li key={i} className="flex items-start gap-2 text-sm text-blue-700">
+                                                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
+                                                    {tip}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {/* Community Q&A */}
+                                {selectedCrop.communityQA && selectedCrop.communityQA.length > 0 && (
+                                    <div className="p-5 bg-purple-50 rounded-2xl border border-purple-100">
+                                        <h4 className="flex items-center gap-2 font-bold text-purple-800 mb-3">
+                                            <Info className="w-5 h-5" /> Farmer Q&amp;A
+                                        </h4>
+                                        <div className="space-y-3">
+                                            {selectedCrop.communityQA.map((qa, i) => (
+                                                <div key={i} className="bg-white/70 rounded-xl p-3 border border-purple-100">
+                                                    <p className="text-xs font-bold text-purple-700 mb-1">Q: {qa.question}</p>
+                                                    <p className="text-xs text-purple-600">A: {qa.answer}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Storage & Market */}
+                                {(selectedCrop.storage || selectedCrop.marketDynamics) && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {selectedCrop.storage && (
+                                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Storage</h4>
+                                                <p className="text-sm text-slate-700">{selectedCrop.storage}</p>
+                                            </div>
+                                        )}
+                                        {selectedCrop.marketDynamics && (
+                                            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                                <h4 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Market</h4>
+                                                <p className="text-sm text-emerald-700">{selectedCrop.marketDynamics}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             <button

@@ -10,6 +10,11 @@ export interface User {
   token?: string;
 }
 
+export interface CommunityQA {
+  question: string;
+  answer: string;
+}
+
 export interface Crop {
   id: number;
   name: string;
@@ -21,6 +26,15 @@ export interface Crop {
   pests: string;
   image: string;
   color: string;
+  bestPractices?: string[];
+  communityQA?: CommunityQA[];
+  storage?: string;
+  marketDynamics?: string;
+}
+
+export interface CropsResponse {
+  total: number;
+  crops: Crop[];
 }
 
 export interface Reply {
@@ -68,6 +82,12 @@ export interface TransportRequest {
   preferredDate: string;
 }
 
+// Token helper – reads the JWT stored by the login flow (App.tsx stores it under 'token')
+const getAuthHeaders = (): Record<string, string> => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 // Authentication
 export const authAPI = {
   signup: async (data: { name: string; email: string; password: string; role?: 'farmer' | 'admin' }): Promise<User> => {
@@ -100,6 +120,13 @@ export const cropsAPI = {
 
     const response = await fetch(`${API_BASE_URL}/crops?${params.toString()}`);
     if (!response.ok) throw new Error('Failed to fetch crops');
+    const data: CropsResponse = await response.json();
+    return data.crops;
+  },
+
+  getById: async (id: number): Promise<Crop> => {
+    const response = await fetch(`${API_BASE_URL}/crops/${id}`);
+    if (!response.ok) throw new Error(`Failed to fetch crop #${id}`);
     return response.json();
   },
 };
@@ -115,7 +142,7 @@ export const communityAPI = {
   createPost: async (data: { title: string; body: string; author: string }): Promise<Post> => {
     const response = await fetch(`${API_BASE_URL}/posts`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error('Failed to create post');
@@ -137,7 +164,7 @@ export const transportAPI = {
   bookTransport: async (data: TransportRequest): Promise<{ message: string; request: any }> => {
     const response = await fetch(`${API_BASE_URL}/transport/book`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error('Failed to book transport');
