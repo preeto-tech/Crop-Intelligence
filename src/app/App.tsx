@@ -34,7 +34,7 @@ export default function App() {
   useEffect(() => {
     if (token && !user) {
       setIsAuthorizing(true);
-      fetch('http://localhost:5001/api/auth/profile', {
+      fetch('https://backend-crop-intelligence.onrender.com/api/auth/profile', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => {

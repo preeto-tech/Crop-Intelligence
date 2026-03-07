@@ -1,5 +1,5 @@
 // API Service for Crop Intelligence Platform
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = 'https://backend-crop-intelligence.onrender.com/api';
 
 // Types
 export interface User {
