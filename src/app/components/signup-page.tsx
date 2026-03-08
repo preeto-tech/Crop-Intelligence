@@ -36,7 +36,7 @@ export function SignupPage({ onNavigate, onLoginSuccess }: { onNavigate: (path: 
         setError('');
 
         try {
-            const response = await fetch('https://backend-crop-intelligence.onrender.com/api/auth/signup', {
+            const response = await fetch('http://localhost:5001/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password, role, location, phone }),

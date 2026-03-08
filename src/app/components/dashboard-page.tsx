@@ -135,7 +135,7 @@ export function DashboardPage({ user, onNavigate, onOpenAI }: DashboardPageProps
                     </div>
 
                     {/* Right: AI Call to action */}
-                    <div className="w-full lg:w-auto flex flex-col sm:flex-row items-center gap-4 bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-2xl">
+                    {/* <div className="w-full lg:w-auto flex flex-col sm:flex-row items-center gap-4 bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-2xl">
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 flex items-center justify-center flex-shrink-0">
                             <Magicpen size={24} variant="Bold" className="text-green-400" />
                         </div>
@@ -152,7 +152,7 @@ export function DashboardPage({ user, onNavigate, onOpenAI }: DashboardPageProps
                                 Ask AI
                             </span>
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

@@ -38,7 +38,7 @@ export function ChatModal({ requestId, currentUser, otherUserName, onClose }: Ch
         fetchHistory();
 
         // 2. Initialize Socket Connection
-        const newSocket = io('https://backend-crop-intelligence.onrender.com'); // Ensure this matches your backend URL
+        const newSocket = io('http://localhost:5001'); // Ensure this matches your backend URL
         setSocket(newSocket);
 
         newSocket.emit('join_room', requestId);

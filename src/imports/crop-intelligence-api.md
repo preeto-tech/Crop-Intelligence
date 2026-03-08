@@ -1,7 +1,7 @@
 Crop Intelligence API Documentation
 This document provides a comprehensive overview of the backend API for the Crop Intelligence platform.
 
-Base URL: https://backend-crop-intelligence.onrender.com
+Base URL: http://localhost:5001
 
 🔐 Authentication
 Base Path: /api/auth

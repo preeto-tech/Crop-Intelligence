@@ -22,6 +22,7 @@ import { TransporterDashboardPage } from './components/transporter-dashboard-pag
 import { GlobalChatWidget } from './components/global-chat-widget';
 import { SellCropsPage } from './components/sell-crops-page';
 import { BuyerDashboardPage } from './components/buyer-dashboard-page';
+import { AIAssistantPage } from './components/ai-assistant-page';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('landing'); // default to landing page
@@ -34,7 +35,7 @@ export default function App() {
   useEffect(() => {
     if (token && !user) {
       setIsAuthorizing(true);
-      fetch('https://backend-crop-intelligence.onrender.com/api/auth/profile', {
+      fetch('http://localhost:5001/api/auth/profile', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => {
@@ -129,6 +130,7 @@ export default function App() {
           }}
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
+          onLogout={handleLogout}
         />
       )}
 
@@ -191,6 +193,8 @@ export default function App() {
                 <TransporterDashboardPage user={user} onLogout={handleLogout} />
               ) : currentView === 'buyer-dashboard' ? (
                 <BuyerDashboardPage user={user!} onLogout={handleLogout} />
+              ) : currentView === 'ai-assistant' ? (
+                <AIAssistantPage user={user!} />
               ) : (
                 <div className="flex-1 p-8 flex flex-col items-center justify-center text-slate-500">
                   <Sparkles className="w-12 h-12 mb-4 opacity-20" />

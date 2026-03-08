@@ -1,5 +1,5 @@
 // API Service for Crop Intelligence Platform
-const API_BASE_URL = 'https://backend-crop-intelligence.onrender.com/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 // Types
 export interface User {
@@ -412,6 +412,16 @@ export const aiAPI = {
       body: JSON.stringify({ prompt }),
     });
     if (!response.ok) throw new Error('Failed to parse AI intent');
+    return response.json();
+  },
+
+  chat: async (message: string, imageBase64?: string, history?: any[]): Promise<{ reply: string }> => {
+    const response = await fetch(`${API_BASE_URL}/ai/chat`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, imageBase64, history }),
+    });
+    if (!response.ok) throw new Error('Failed to get AI response');
     return response.json();
   }
 };

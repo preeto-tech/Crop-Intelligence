@@ -22,7 +22,7 @@ export function ProfilePage({ token, onLogout, onNavigate }: { token: string | n
             }
 
             try {
-                const response = await fetch('https://backend-crop-intelligence.onrender.com/api/auth/profile', {
+                const response = await fetch('http://localhost:5001/api/auth/profile', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
