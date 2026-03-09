@@ -132,7 +132,7 @@ export function GlobalChatWidget({ currentUser }: GlobalChatWidgetProps) {
                 setChats(initialChats);
 
                 // Initialize Socket Connection
-                const newSocket = io('http://localhost:5001');
+                const newSocket = io('https://backend-crop-intelligence.onrender.com');
                 setSocket(newSocket);
 
                 // Join all rooms for active chats

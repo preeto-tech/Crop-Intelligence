@@ -90,8 +90,8 @@ An intelligent RAG-model AI for disease diagnosis from images, alongside real hu
 3. Configure Environment Variables:
    Create a `.env` file in the root directory and configure the Backend API URL:
    ```env
-   VITE_API_BASE_URL=http://localhost:5001/api
-   VITE_SOCKET_URL=http://localhost:5001
+   VITE_API_BASE_URL=https://backend-crop-intelligence.onrender.com/api
+   VITE_SOCKET_URL=https://backend-crop-intelligence.onrender.com
    ```
 
 4. Start the development server:
